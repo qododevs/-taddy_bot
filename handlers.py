@@ -173,13 +173,25 @@ async def handle_message(message: Message, bot: Bot):
     user_id = message.from_user.id
     user_text = message.text
 
-    await bot.send_chat_action(chat_id=message.chat.id, action=ChatAction.TYPING)
+    # Отправляем сообщение "Думаю..."
     thinking_msg = await message.answer("🐻 Думаю...", reply_markup=None)
+
+    # Фоновая задача для постоянной анимации "печатает..."
+    async def keep_typing():
+        try:
+            while True:
+                await bot.send_chat_action(chat_id=message.chat.id, action=ChatAction.TYPING)
+                await asyncio.sleep(4)
+        except asyncio.CancelledError:
+            pass
+        except Exception as e:
+            print(f"[TYPING ERROR] {e}")
+
+    typing_task = asyncio.create_task(keep_typing())
 
     try:
         await asyncio.sleep(0.7)
 
-        # 👇 ИСПРАВЛЕНО: распаковываем 4 значения
         context, name, gender, character = await get_context(user_id)
 
         if not name or not gender:
@@ -191,21 +203,39 @@ async def handle_message(message: Message, bot: Bot):
 
         await reload_api_keys()
 
-        # Передаём character в get_ai_response
         ai_reply, new_context = await get_ai_response(user_id, user_text, context, name, gender, character)
 
         await update_context(user_id, new_context, name, gender, character)
         await increment_stats(user_id)
 
+        # 👇 ШАГ 1: Запускаем анимацию ПЕРЕД удалением
+        await bot.send_chat_action(chat_id=message.chat.id, action=ChatAction.TYPING)
+        await asyncio.sleep(0.2)  # даём анимации "запуститься"
+
+        # 👇 ШАГ 2: Удаляем "Думаю..." — анимация уже идёт
         try:
             await thinking_msg.delete()
         except TelegramBadRequest:
             pass
 
-        await bot.send_chat_action(chat_id=message.chat.id, action=ChatAction.TYPING)
+        # 👇 ШАГ 3: Отправляем ответ — НЕ отменяем анимацию раньше времени
         await message.answer(ai_reply, reply_markup=None)
 
+        # 👇 ШАГ 4: Только ТЕПЕРЬ отменяем фоновую анимацию
+        typing_task.cancel()
+        try:
+            await typing_task
+        except asyncio.CancelledError:
+            pass
+
     except Exception as e:
+        # Отменяем анимацию при ошибке
+        typing_task.cancel()
+        try:
+            await typing_task
+        except asyncio.CancelledError:
+            pass
+
         try:
             await thinking_msg.delete()
         except TelegramBadRequest:

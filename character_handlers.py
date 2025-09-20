@@ -12,7 +12,8 @@ def get_character_inline_kb():
     buttons = [
         [InlineKeyboardButton(text="😐 Нейтральный", callback_data="char_neutral")],
         [InlineKeyboardButton(text="🤔 Философский", callback_data="char_philosophical")],
-        [InlineKeyboardButton(text="😄 Юмористический", callback_data="char_humorous")]
+        [InlineKeyboardButton(text="😄 Юмористический", callback_data="char_humorous")],
+        [InlineKeyboardButton(text="😄 Твоя подруга", callback_data="char_girl")]
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -53,7 +54,8 @@ def get_character_name(key: str) -> str:
     names = {
         "neutral": "Нейтральный",
         "philosophical": "Философский",
-        "humorous": "Юмористический"
+        "humorous": "Юмористический",
+        "girl": "Твоя подруга"
     }
     return names.get(key, "Неизвестный")
 
