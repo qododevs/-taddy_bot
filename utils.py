@@ -133,17 +133,22 @@ def get_client():
     # key = API_KEYS[current_key_index]
     # print(f"[INFO] Using API key index: {current_key_index}")
 
-    global current_key_index, api_keys_cache
+    # global current_key_index, api_keys_cache
+    #
+    # # Если кэш пуст — загружаем
+    # if not api_keys_cache:
+    #     raise RuntimeError("API-ключи не загружены. Вызовите reload_api_keys()")
+    #
+    # key = api_keys_cache[current_key_index]
+    # print(f"[INFO] Using API key index: {current_key_index} (key: {key[:6]}...)")
+    # return AsyncOpenAI(
+    #     api_key=key,
+    #     base_url="https://api.longcat.chat/openai"
+    # )
 
-    # Если кэш пуст — загружаем
-    if not api_keys_cache:
-        raise RuntimeError("API-ключи не загружены. Вызовите reload_api_keys()")
-
-    key = api_keys_cache[current_key_index]
-    print(f"[INFO] Using API key index: {current_key_index} (key: {key[:6]}...)")
     return AsyncOpenAI(
-        api_key=key,
-        base_url="https://api.longcat.chat/openai"
+        api_key=os.getenv("OPENROUTER_API_KEY"),
+        base_url="https://openrouter.ai/api/v1"
     )
 
 
@@ -190,10 +195,16 @@ async def get_ai_response(user_id, user_message, context, name=None, gender=None
     while retries < max_retries:
         try:
             # Асинхронный запрос к модели
+            # response = await client.chat.completions.create(
+            #     model="LongCat-Flash-Chat",
+            #     messages=messages,
+            #     max_tokens=600,
+            #     temperature=0.7
+            # )
             response = await client.chat.completions.create(
-                model="LongCat-Flash-Chat",
+                model="deepseek/deepseek-chat-v3.1:free",
                 messages=messages,
-                max_tokens=600,
+                max_tokens=1000,
                 temperature=0.7
             )
 
