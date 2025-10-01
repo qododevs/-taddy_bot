@@ -77,7 +77,7 @@ async def cmd_start(message: Message, bot: Bot):
         await message.answer(greeting, reply_markup=get_main_menu(user_id))
     else:
         await message.answer(
-            "👋 Привет! Я — Тедди 🐻. Прежде чем начать, выбери, в каком стиле тебе комфортно общаться:",
+            "👋 Привет! Я — Тедди 🐻. Прежде чем начать, выбери, в каком стиле тебе комфортно общаться или оставь как есть:",
             reply_markup=get_character_inline_kb()
         )
 

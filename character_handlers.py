@@ -13,7 +13,7 @@ def get_character_inline_kb():
         [InlineKeyboardButton(text="😐 Нейтральный", callback_data="char_neutral")],
         [InlineKeyboardButton(text="🤔 Философский", callback_data="char_philosophical")],
         [InlineKeyboardButton(text="😄 Юмористический", callback_data="char_humorous")],
-        [InlineKeyboardButton(text="😄 Твоя подруга", callback_data="char_girl")]
+        [InlineKeyboardButton(text="😄 Твой Тедди ", callback_data="char_taddy")]
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -43,7 +43,8 @@ async def set_character(callback: CallbackQuery, bot: Bot):
     else:
         greeting = (
             "Привет! 👋 Меня зовут Тедди 🐻 — я твой цифровой друг, который всегда готов выслушать.\n\n"
-            "А как тебя зовут? И, если не секрет, ты мужчина или женщина? "
+           
+            "А как тебя зовут? И, если не секрет, ты парень или девушка? "
             "Мне важно понимать, чтобы лучше тебя слушать."
         )
 
@@ -55,7 +56,7 @@ def get_character_name(key: str) -> str:
         "neutral": "Нейтральный",
         "philosophical": "Философский",
         "humorous": "Юмористический",
-        "girl": "Твоя подруга"
+        "taddy": "Твой Тедди"
     }
     return names.get(key, "Неизвестный")
 
@@ -63,6 +64,6 @@ def get_character_name(key: str) -> str:
 @router.message(F.text == "Характер")
 async def choose_character(message: Message):
     await message.answer(
-        "🎭 Выбери характер общения со мной:",
+        "🎭 Выбери характер общения со мной или оставь как есть :",
         reply_markup=get_character_inline_kb()
     )
