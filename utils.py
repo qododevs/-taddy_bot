@@ -175,7 +175,7 @@ async def get_ai_response(user_id, user_message, context, name=None, gender=None
 
     # Получаем промт в зависимости от характера
     from prompts import CHARACTER_PROMPTS, DEFAULT_CHARACTER
-    system_prompt = CHARACTER_PROMPTS.get(character, CHARACTER_PROMPTS[DEFAULT_CHARACTER])
+    system_prompt = CHARACTER_PROMPTS["taddy"]  # всегда нейтральный
 
     if not context:
         messages = [
@@ -203,10 +203,14 @@ async def get_ai_response(user_id, user_message, context, name=None, gender=None
             # )
             response = await client.chat.completions.create(
                 model="deepseek/deepseek-chat-v3.1:free",
+                # model="google/gemma-3n-e2b-it:free",
+                # model="openai/gpt-oss-20b:free",
+                # model="deepseek/deepseek-r1-0528-qwen3-8b:free",
                 messages=messages,
                 max_tokens=1000,
                 temperature=0.7
-            )
+            ),
+            timeout = 15.0
 
             ai_reply = response.choices[0].message.content.strip()
 

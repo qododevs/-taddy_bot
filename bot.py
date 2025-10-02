@@ -32,7 +32,7 @@ async def main():
     init_notifier(bot)
     dp = Dispatcher()
 
-    dp.include_router(character_router)
+    # dp.include_router(character_router)
     dp.include_router(admin_router)
     dp.include_router(router)
 

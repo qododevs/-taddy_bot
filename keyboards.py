@@ -6,7 +6,7 @@ def get_main_menu(user_id: int = None):
         [KeyboardButton(text="Очистить контекст")],
     ]
 
-    second_row = [KeyboardButton(text="Остановить ответ"), KeyboardButton(text="Характер")]
+    second_row = [KeyboardButton(text="Остановить ответ")]
 
     ADMIN_IDS = list(map(int, os.getenv("ADMIN_IDS", "").split(","))) if os.getenv("ADMIN_IDS") else []
 
